@@ -70,20 +70,20 @@ criterion = nn.MSELoss()
 
 epochs = 30
 
-# for epoch in range(epochs):
-#     loss = 0
-#     for batch, labels in train_loader:
-#         batch = batch.reshape(-1, 784)
-#         optimizer.zero_grad()
+for epoch in range(epochs):
+    loss = 0
+    for batch, labels in train_loader:
+        batch = batch.reshape(-1, 784)
+        optimizer.zero_grad()
 
-#         reconstruction = model(batch)
-#         train_loss = criterion(batch, reconstruction)
-#         train_loss.backward()
-#         optimizer.step()
+        reconstruction = model(batch)
+        train_loss = criterion(batch, reconstruction)
+        train_loss.backward()
+        optimizer.step()
 
-#         loss += train_loss.item()
-#     loss = loss / len(train_loader)
-#     print("epoch {}/{}, loss = {:.6f}".format(epoch, epochs, loss))
+        loss += train_loss.item()
+    loss = loss / len(train_loader)
+    print("epoch {}/{}, loss = {:.6f}".format(epoch, epochs, loss))
 
 with torch.no_grad():
     number = 10
