@@ -85,6 +85,8 @@ for epoch in range(epochs):
     loss = loss / len(train_loader)
     print("epoch {}/{}, loss = {:.6f}".format(epoch, epochs, loss))
 
+torch.save(model.state_dict, './ae.pth')
+
 with torch.no_grad():
     number = 10
     plt.figure(figsize=(20, 5))
