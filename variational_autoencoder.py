@@ -1,3 +1,5 @@
+import sys
+
 import torch
 import torchvision
 import torch.nn as nn
@@ -7,6 +9,8 @@ from torch.distributions import normal
 import matplotlib.pyplot as plt
 
 transform = torchvision.transforms.ToTensor()
+
+argumentList = sys.argv
 
 class Encoder(nn.Module):
     def __init__(self):
@@ -115,22 +119,27 @@ criterion = nn.MSELoss()
 
 epochs = 30
 
-for epoch in range(epochs):
-    loss = 0
-    for batch, labels in train_loader:
-        batch = batch.reshape(-1, 784)
-        optimizer.zero_grad()
+if len(argumentList) > 2:
+    for epoch in range(epochs):
+        loss = 0
+        for batch, labels in train_loader:
+            batch = batch.reshape(-1, 784)
+            optimizer.zero_grad()
 
-        reconstruction = model(batch)
-        train_loss = criterion(batch, reconstruction)
-        train_loss.backward()
-        optimizer.step()
+            reconstruction = model(batch)
+            train_loss = criterion(batch, reconstruction)
+            train_loss.backward()
+            optimizer.step()
 
-        loss += train_loss.item()
-    loss = loss / len(train_loader)
-    print("epoch {}/{}, loss = {:.6f}".format(epoch, epochs, loss))
+            loss += train_loss.item()
+        loss = loss / len(train_loader)
+        print("epoch {}/{}, loss = {:.6f}".format(epoch, epochs, loss))
 
-torch.save(model.state_dict(), './vae.pth')
+    torch.save(model.state_dict(), './vae.pth')
+else:
+    model.load_state_dict(torch.load('./trained_models/vae.pth'))
+
+
 
 with torch.no_grad():
     number = 10
@@ -138,14 +147,14 @@ with torch.no_grad():
     for index in range(number):
         # display original
         ax = plt.subplot(2, number, index + 1)
-        plt.imshow(test_dataset.data[index].reshape(28, 28))
+        plt.imshow(test_dataset.data[index + 10].reshape(28, 28))
         plt.gray()
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
 
         # display reconstruction
         ax = plt.subplot(2, number, index + 1 + number)
-        test_data = test_dataset.data[index]
+        test_data = test_dataset.data[index + 10]
         test_data = test_data
         test_data = test_data.float()
         test_data = test_data.view(-1, 784)
